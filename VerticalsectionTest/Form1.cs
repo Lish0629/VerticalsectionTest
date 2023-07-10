@@ -27,69 +27,7 @@ namespace VerticalsectionTest
             InitializeComponent();
         }
 
-        private void 打开文件ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            
-            FileRead fileRead = new FileRead();
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                filename = openFileDialog1.FileName;
-                fileRead.Read(openFileDialog1.FileName);
-                dataPoints = fileRead.datapoints;
-                keyPoints = fileRead.keypoints;
-                h0 = fileRead.h0;
-            }
-            richTextBox2.Text = fileRead.headline;
-            foreach(Point p in dataPoints)
-            {
-                richTextBox2.Text += p.ToString();
-            }
-        }
-        private void 计算设置ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        public void 生成插值点ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (filename == null)
-            {
-                MessageBox.Show("未导入数据");
-                return;
-            }
-            if (xsection.allLine.Count == 0)
-            {
-                richTextBox2.Text = "";
-            }
-            ysection = new Ysection(keyPoints,dataPoints,h0);
-            ysection.CreateInsPoint(delta, 5);
-            richTextBox2.Text = "";
-            foreach(Point p in ysection.AllinLine)
-            {
-                richTextBox2.Text += p.ToString();
-            }
-        }//纵截面
-
         
-
-        
-
-        public void 生成纵截面图ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Series areaSeries = new Series("纵截面");
-            areaSeries.ChartType = SeriesChartType.Line;
-            chart1.Series.Add(areaSeries);
-            chart1.Titles.Add("纵截面图");
-            chart1.ChartAreas[0].AxisX.Title = "距K0距离";
-            chart1.ChartAreas[0].AxisY.Title = "高度";
-            areaSeries.Points.AddXY(0, keyPoints[0].H);
-            
-            foreach (Point point in ysection.InsPoints)
-            {
-                areaSeries.Points.AddXY(Math.Round(Algo.Distance(point, keyPoints[0])),point.H);
-            }
-            tabControl1.SelectedTab = tabControl1.TabPages[1];
-        }
         private void button1_Click(object sender, EventArgs e)
         {
             /*Point point = new Point();
@@ -114,25 +52,59 @@ namespace VerticalsectionTest
             point2 = keyPoints[2];
             MessageBox.Show($"{Algo.CalAngle(point, point1)},{Algo.CalAngle(point1, point2)}");
         }
+        
 
-        public void 计算纵断面长度ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
-            ysection.CalYLength();
-            richTextBox2.Text += "---------纵断面长度---------\n" ;
-            richTextBox2.Text += $"纵断面长度：{Math.Round(ysection.Length,3)}\n";
+            richTextBox2.Text = "";
         }
 
-        private void 计算纵截面面积ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void 加载数据ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            FileRead fileRead = new FileRead();
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                filename = openFileDialog1.FileName;
+                fileRead.Read(openFileDialog1.FileName);
+                dataPoints = fileRead.datapoints;
+                keyPoints = fileRead.keypoints;
+                h0 = fileRead.h0;
+            }
+            richTextBox2.Text = fileRead.headline;
+            foreach (Point p in dataPoints)
+            {
+                richTextBox2.Text += p.ToString();
+            }
+        }
+        private void 纵断面计算ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (filename == null)
+            {
+                MessageBox.Show("未导入数据");
+                return;
+            }
+            if (xsection.allLine.Count == 0)
+            {
+                richTextBox2.Text = "";
+            }
+            ysection = new Ysection(keyPoints, dataPoints, h0);
+            ysection.CreateInsPoint(delta, 5);
+            richTextBox2.Text = "";
+            foreach (Point p in ysection.AllinLine)
+            {
+                richTextBox2.Text += p.ToString();
+            }
+            ysection.CalYLength();
+            richTextBox2.Text += "---------纵断面长度---------\n";
+            richTextBox2.Text += $"纵断面长度：{Math.Round(ysection.Length, 3)}\n";
             ysection.CalYArea();
             richTextBox2.Text += "---------纵断面面积---------\n";
             richTextBox2.Text += $"纵断面面积：{Math.Round(ysection.Area, 3)}\n";
         }
-
-        private void 生成插值ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void 横断面计算ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             delta = 5;
-            if ( filename == null)
+            if (filename == null)
             {
                 MessageBox.Show("未导入数据");
                 return;
@@ -143,27 +115,67 @@ namespace VerticalsectionTest
             }
             for (int i = 0; i < keyPoints.Count - 1; i++)
             {
-                xsection = new Xsection(keyPoints[i], keyPoints[i+1], dataPoints, h0);
+                xsection = new Xsection(keyPoints[i], keyPoints[i + 1], dataPoints, h0);
                 xsection.CreateInsPoint(delta, 5);
-                xsections.Add(xsection);    
+                xsections.Add(xsection);
             }
-            foreach(Xsection xsection in xsections)
+            foreach (Xsection xsection in xsections)
             {
-                richTextBox2.Text += $"========横截面{xsection.mPoint.Name}========\n";
-                foreach(Point x in xsection.allLine)
+                richTextBox2.Text += $"=========横截面{xsection.mPoint.Name}=========\n";
+                foreach (Point x in xsection.allLine)
                 {
                     richTextBox2.Text += x.ToString();
                 }
+                xsection.CalXArea();
+                richTextBox2.Text += "---------横断面面积---------\n";
+                richTextBox2.Text += $"横断面面积：{Math.Round(xsection.area, 3)}\n";
             }
-         
-            
-            
-            
-        }//横截面
-
-        private void 生成ToolStripMenuItem_Click(object sender, EventArgs e)
+            foreach(Xsection xsection in xsections)
+            {
+                ToolStripMenuItem subMenuItem = new ToolStripMenuItem(xsection.mPoint.Name);
+                subMenuItem.Click += 生成横截面图_Click;
+                subMenuItem.Tag= xsection;
+                // 将次级按钮添加到编辑菜单下
+                生成横截面图ToolStripMenuItem1.DropDownItems.Add(subMenuItem);
+            }
+        }
+        public void 生成纵截面图ToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Series areaSeries = new Series("纵截面");
+            areaSeries.ChartType = SeriesChartType.Line;
+            chart1.Series.Add(areaSeries);
+            chart1.Titles.Add("纵截面图");
+            chart1.ChartAreas[0].AxisX.Title = "距K0距离";
+            chart1.ChartAreas[0].AxisY.Title = "高度";
+            areaSeries.Points.AddXY(0, keyPoints[0].H);
 
+            foreach (Point point in ysection.AllinLine)
+            {
+                areaSeries.Points.AddXY(Math.Round(Algo.Distance(point, keyPoints[0])), point.H);
+            }
+            tabControl1.SelectedTab = tabControl1.TabPages[1];
+        }
+        public void 生成横截面图_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem clickedButton = (ToolStripMenuItem)sender;
+            
+            Xsection xt=new Xsection();
+            xt = clickedButton.Tag as Xsection;
+             
+            Series areaXSeries = new Series("横截面");
+            areaXSeries.ChartType = SeriesChartType.Line;
+            chart1.Series.Clear();
+            chart1.Series.Add(areaXSeries);
+            chart1.Titles.Clear();
+            chart1.Titles.Add("横截面截面图");
+            chart1.ChartAreas[0].AxisX.Title = "距M距离";
+            chart1.ChartAreas[0].AxisY.Title = "高度";
+
+            foreach (Point point in xt.allLine)
+            {
+                areaXSeries.Points.AddXY(point.Name.Substring(1), point.H);
+            }
+            tabControl1.SelectedTab = tabControl1.TabPages[1];
         }
     }
 }

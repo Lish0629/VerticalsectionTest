@@ -65,7 +65,7 @@ namespace VerticalsectionTest
                     
                     );
             }
-            return Length;
+            return Area;
         }
     }
 }

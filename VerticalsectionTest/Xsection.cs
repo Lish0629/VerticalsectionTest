@@ -13,6 +13,7 @@ namespace VerticalsectionTest
         public Point mPoint=new Point();
         public double mAngle;
         int delta=10;
+        public double area = 0;
         double h0;
         public List<Point> dataPoints=new List<Point>();
         public List<Point> insPoints=new List<Point>();
@@ -44,7 +45,7 @@ namespace VerticalsectionTest
                 }
                 Point pt=new Point();
                 pt.Name = $"M{i:D2}";
-                MessageBox.Show(delta.ToString());
+                //MessageBox.Show(delta.ToString());
                 pt.X = mPoint.X + i * delta * Math.Cos(mAngle);
                 pt.Y = mPoint.Y + i * delta * Math.Sin(mAngle);
                 pt.H = Algo.CalHeight(n, pt, dataPoints);
@@ -53,8 +54,17 @@ namespace VerticalsectionTest
             }
             return insPoints;
         }
+        public void CalXArea()
+        {
+            area = 0;
+            for (int i = 0; i < allLine.Count - 1; i++)
+            {
+                area += Algo.CalArea(allLine[i], allLine[i + 1], h0);
+            }
+           
+        }
 
-        
+
 
 
     }
