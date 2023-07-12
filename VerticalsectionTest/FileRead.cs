@@ -51,8 +51,6 @@ namespace VerticalsectionTest
                     datapoints.Add(data);
                 }
             }
-
-            
         }
     }
 }

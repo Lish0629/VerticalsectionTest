@@ -18,6 +18,14 @@ namespace VerticalsectionTest
             X = x; Y = y;
         }
         public Point() { }
+        public Point(string line)
+        {
+            var part = line.Split(',');
+            Name = part[0];
+            X = double.Parse(part[1].Trim());
+            Y = double.Parse(part[2].Trim());
+            H = double.Parse(part[3].Trim());
+        }
         public void Parse(string line)
         {
             var part=line.Split(',');

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
@@ -57,6 +59,7 @@ namespace VerticalsectionTest
         private void button2_Click(object sender, EventArgs e)
         {
             richTextBox2.Text = "";
+            
         }
 
         private void 加载数据ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -176,6 +179,42 @@ namespace VerticalsectionTest
                 areaXSeries.Points.AddXY(point.Name.Substring(1), point.H);
             }
             tabControl1.SelectedTab = tabControl1.TabPages[1];
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            if(tabControl1.SelectedTab == tabControl1.TabPages[1])
+            {
+                FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+                DialogResult result = folderBrowserDialog.ShowDialog();
+
+                if (result == DialogResult.OK)
+                {
+                    // 用户点击了确定按钮，获取选择的文件夹路径
+                    string selectedFolderPath = folderBrowserDialog.SelectedPath;
+                    chart1.SaveImage(selectedFolderPath + "\\Save.png", ImageFormat.Png);
+                    MessageBox.Show("图片保存成功！");
+                }
+            }
+            else if(tabControl1.SelectedTab == tabControl1.TabPages[0])
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "文本文件|*.txt";
+                saveFileDialog.Title = "保存文本文件";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string filePath = saveFileDialog.FileName;
+
+                    using (StreamWriter writer = new StreamWriter(filePath))
+                    {
+                        writer.Write(richTextBox2.Text);
+                    }
+
+                    MessageBox.Show("文本已成功保存到文件中。");
+                }
+            }
+            
         }
     }
 }

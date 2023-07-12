@@ -60,12 +60,7 @@ namespace VerticalsectionTest
             for (int i = 0; i < allLine.Count - 1; i++)
             {
                 area += Algo.CalArea(allLine[i], allLine[i + 1], h0);
-            }
-           
+            }     
         }
-
-
-
-
     }
 }
